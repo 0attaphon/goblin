@@ -20,8 +20,7 @@
     "build": "tsc",
     "test": "npm run build && node --test test/*.test.mjs",
     "check": "tsc --noEmit",
-    "prepack": "npm run build",
-    "prepare": "npm run build"
+    "pack:release": "npm run build && npm pack"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.0",

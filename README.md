@@ -20,7 +20,7 @@ Then scan your installed skills:
 goblin scan
 ```
 
-npm builds the CLI automatically. You do not need to clone the repository or run the build yourself. Use the same install command to update; uninstall with `npm uninstall --global goblin-skill-manager`.
+The repository includes a ready-to-run CLI. You do not need to clone the repository or run the build yourself. Use the same install command to update; uninstall with `npm uninstall --global goblin-skill-manager`.
 
 ## Develop locally
 
@@ -42,7 +42,7 @@ goblin scan
 To prepare a distributable tarball without publishing:
 
 ```sh
-npm pack
+npm run pack:release
 npm install --global ./goblin-skill-manager-0.0.1.tgz
 ```
 
