@@ -17,10 +17,10 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "npm run build && node --test test/*.test.mjs",
+    "compile": "tsc",
+    "test": "npm run compile && node --test test/*.test.mjs",
     "check": "tsc --noEmit",
-    "pack:release": "npm run build && npm pack"
+    "pack:release": "npm run compile && npm pack"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.0",

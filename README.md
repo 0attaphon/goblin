@@ -27,7 +27,7 @@ The repository includes a ready-to-run CLI. You do not need to clone the reposit
 ```sh
 cd goblin
 npm ci --ignore-scripts
-npm run build
+npm run compile
 node dist/cli.js scan
 ```
 
