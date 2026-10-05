@@ -48,10 +48,34 @@ npm install --global ./goblin-skill-manager-0.0.1.tgz
 
 The npm package name has not been reserved. No package has been published.
 
+## Select and disable in the terminal
+
+Run `goblin scan` in a terminal to open the checkbox list:
+
+```text
+Goblin — Select skills to disable in Codex
+
+> [ ] caveman (enabled)
+  [x] firecrawl (enabled)
+  [x] pdf (enabled)
+  [–] system-skill (enabled) — managed / system / synced
+
+↑↓ Move · Space Check · Enter Submit · Esc Cancel
+```
+
+Use **↑/↓** to move and **Space** to check multiple skills. **Enter** submits once and disables the checked skills in sequence. **Esc** or **Ctrl+C** cancels without changing files. Nothing is selected initially; Enter with no selections makes no changes. The focused row shows its ID, path, source and usage information; long text is clipped to the terminal width, and the list scrolls as you move.
+
+Only supported manual **Codex** skills can be checked. Already disabled, managed, synced, system and other-provider entries display why they cannot be selected. Skill files stay in place; this changes native Codex configuration. Restart Codex afterward. No instructions, hooks, tools or token overhead are added to other skills.
+
+Goblin checks every selection before writing. A changed skill or an unsupported config stops submission. Changes are applied sequentially, rather than as an atomic transaction; a failure stops remaining changes and reports any completed ones. The summary prints restore commands **in reverse order** because every edit shares the same config file. Run those commands in the printed order to undo the selection; later independent config edits can cause a restore conflict.
+
+`goblin scan --no-interactive` shows the original table. `--json` and piped/non-terminal output stay read-only and never open checkboxes. The MCP interface also stays read-only when scanning.
+
 ## Commands
 
 ```sh
 goblin scan
+goblin scan --no-interactive
 goblin scan --json
 goblin scan --project /absolute/path/to/project
 goblin scan --root /absolute/path/to/skills

@@ -8,7 +8,7 @@ const help = `Goblin 0.0.1 — Your little skill keeper.
 
 Usage: goblin <command> [arguments] [options]
 
-  scan / list                  Show ID, name, path, last use and count
+  scan / list                  Show skills; check and disable in a terminal
   inspect <name-or-id>          Show metadata, shared target and capabilities
   tidy                         Report duplicates and broken references
   remove / stash <name-or-id>   Remove from discovery, retaining recoverable files
@@ -25,6 +25,7 @@ Options:
   --data-dir <path>            Archive/history directory outside skill roots
   --home <path>                Override home for testing or portable setups
   --json                       Machine-readable output
+  --no-interactive             Show the scan table without checkboxes
   --dry-run                    Preview remove/restore/disable/enable
   --version                    Print version
 
@@ -47,7 +48,7 @@ export async function main(args = process.argv.slice(2)) {
         return;
     }
     const options = {}, roots = [], positional = [];
-    let json = false, dryRun = false, print = false, provider;
+    let json = false, dryRun = false, print = false, noInteractive = false, provider;
     const valueFlags = new Set(['--root', '--data-dir', '--home', '--project', '--provider', '--app']);
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
@@ -71,6 +72,8 @@ export async function main(args = process.argv.slice(2)) {
         }
         else if (arg === '--json')
             json = true;
+        else if (arg === '--no-interactive')
+            noInteractive = true;
         else if (arg === '--dry-run')
             dryRun = true;
         else if (arg === '--print')
@@ -90,6 +93,8 @@ export async function main(args = process.argv.slice(2)) {
         throw new GoblinError('INVALID_ARGUMENT', '--dry-run is for changes only.');
     if (print && command !== 'setup')
         throw new GoblinError('INVALID_ARGUMENT', '--print is for setup only.');
+    if (noInteractive && !['scan', 'list'].includes(command))
+        throw new GoblinError('INVALID_ARGUMENT', '--no-interactive is for scan only.');
     if (command === 'mcp') {
         if (target || json || dryRun || print)
             throw new GoblinError('INVALID_ARGUMENT');
@@ -135,6 +140,10 @@ export async function main(args = process.argv.slice(2)) {
         }
         else if (json)
             printJson(catalog);
+        else if (!noInteractive && process.stdin.isTTY && process.stdout.isTTY) {
+            const { interactiveScan } = await import('./interactive.js');
+            await interactiveScan(options, catalog);
+        }
         else {
             table(catalog.skills);
             console.log(`\n${catalog.skills.length} entries. Usage: unknown (no verified usage adapter in 0.0.1).`);
