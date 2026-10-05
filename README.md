@@ -22,6 +22,26 @@ goblin scan
 
 The repository includes a ready-to-run CLI. You do not need to clone the repository or run the build yourself. Use the same install command to update; uninstall with `npm uninstall --global goblin-skill-manager`.
 
+## Measured results
+
+**5,307 fewer input tokens (27.57%)** in a real HTML-generation experiment on 2026-10-05. Six Codex CLI calls used the same Thai dashboard prompt and model (`gpt-6.1-sol`, medium reasoning), arranged as three pairs with alternating order. The baseline enabled 66 local skill candidates; the focused condition disabled those 66 candidates for the invocation because this self-contained task needed no optional skill.
+
+| Metric | 66 candidates enabled | 66 candidates disabled |
+| --- | ---: | ---: |
+| Input tokens, median | 19,246 | 13,939 |
+| Cached input tokens, median | 12,288 | 12,288 |
+| Uncached input tokens, median | 6,958 | 1,651 |
+| Output tokens, median | 3,304 | 3,010 |
+| Elapsed seconds, median | 111.87 | 101.01 |
+
+Input was 19,246 versus 13,939 in **every pair**, measured from Codex's actual usage events. Cached input is part of input, not an extra count. Installed skill files stayed unchanged; all six runs produced HTML. Basic document, inline CSS/JS, control labels and external-asset checks passed on all six outputs; browser search and status-filter checks covered the first pair.
+
+These numbers measure prompt/context tokens for one single-response task, not context-window capacity. Both conditions excluded user plugins and MCP, including Goblin's own MCP overhead. Output length, latency, caching and quality can vary; this is **not a universal token, cost or quality guarantee**.
+
+Evidence: [full A/B report](benchmarks/html-context/report.md), [measurements](benchmarks/html-context/results.json), [exact prompt](benchmarks/html-context/prompt.txt), [HTML checks](benchmarks/html-context/quality-checks.json), [baseline HTML](benchmarks/html-context/runs/pair-1-all/index.html), [focused HTML](benchmarks/html-context/runs/pair-1-focused/index.html).
+
+**Automated verification: 37/37 tests pass.** This includes 10 real terminal/PTY scenarios for multi-selection, cancellation, scrolling, stale selections, shared aliases and interrupted-write recovery. The remaining tests cover catalog safety, reversible changes, CLI and MCP. Tests use temporary fixture roots and never modify the user's installed skills. Python 3 is needed only to run the PTY tests; using Goblin requires Node.js and Git as described above.
+
 ## Develop locally
 
 ```sh
@@ -157,12 +177,12 @@ Cross-filesystem moves use a verified staging copy. If an interruption leaves a 
 
 ## Development
 
-The paired HTML experiment is available in `benchmarks/html-context/report.md` and `report.html` in the source tree. With 66 local Codex skill candidates and the same prompt/model, input tokens were 19,246 with candidates enabled and 13,939 with candidates disabled in all three pairs: 5,307 fewer tokens (27.57%). This single-response test excludes user plugin/MCP configuration and Goblin's MCP overhead. It is not a universal saving guarantee. No installed skill files were changed.
+See [Measured results](#measured-results) for benchmark evidence and automated verification coverage.
 
 ```sh
 npm test
 npm run check
-npm pack
+npm run pack:release
 ```
 
 Tests use temporary fixture roots, including real filesystem symlinks and MCP SDK client/server processes. They never remove the user's installed skills. Actual account usage data, cloud skills, profiles and permanent deletion are outside 0.0.1.
