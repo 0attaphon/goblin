@@ -36,8 +36,8 @@ Unknown usage is not zero. No hooks or skill text are added.
 
 function clean(value: unknown): string { return String(value).replace(/[\x00-\x1f\x7f-\x9f]/g, ' '); }
 function table(skills: Skill[]): void {
-  console.log(['RANK', 'ID', 'NAME', 'PATH', 'LAST USED', 'USES', 'STATUS', 'SOURCE'].join('\t'));
-  for (const s of skills) console.log([s.usage_rank ?? 'unknown', s.id, s.name, s.path, s.last_used_at ?? 'unknown', s.usage_count ?? 'unknown', s.status, s.source].map(clean).join('\t'));
+  console.log(['RANK', 'ID', 'NAME', 'LAST USED', 'USES', 'STATUS', 'SOURCE'].join('\t'));
+  for (const s of skills) console.log([s.usage_rank ?? 'unknown', s.id, s.name, s.last_used_at ?? 'unknown', s.usage_count ?? 'unknown', s.status, s.source].map(clean).join('\t'));
 }
 function printJson(value: unknown): void { console.log(JSON.stringify(value, null, 2)); }
 export async function main(args = process.argv.slice(2)): Promise<void> {

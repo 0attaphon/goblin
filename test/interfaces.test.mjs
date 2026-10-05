@@ -27,12 +27,13 @@ test('CLI scan shows details and JSON omits skill bodies and reports unknown usa
   const dir = skill(root, 'alpha', 'alpha', 'SECRET_BODY_MUST_STAY_LOCAL');
   const human = run(options, 'scan');
   assert.equal(human.status, 0, human.stderr);
-  for (const label of ['ID', 'NAME', 'PATH', 'LAST USED', 'USES']) assert.ok(human.stdout.includes(label));
-  assert.ok(human.stdout.includes(dir));
+  for (const label of ['ID', 'NAME', 'LAST USED', 'USES']) assert.ok(human.stdout.includes(label));
+  assert.ok(!human.stdout.includes(dir));
   assert.ok(human.stdout.includes('unknown'));
   const json = run(options, 'scan', '--json');
   assert.equal(json.status, 0, json.stderr);
   assert.equal(JSON.parse(json.stdout).skills[0].name, 'alpha');
+  assert.equal(JSON.parse(json.stdout).skills[0].path, dir);
   assert.ok(!json.stdout.includes('SECRET_BODY_MUST_STAY_LOCAL'));
 });
 

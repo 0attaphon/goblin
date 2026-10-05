@@ -130,7 +130,7 @@ goblin enable <name-or-id> --app codex
 goblin history
 ```
 
-`scan` immediately shows **ID, name, absolute path, last use, use count, state and source**. `--json` includes canonical paths, shared-link information and scan issues. There is no separate `least-used` command.
+`scan` immediately shows **rank, ID, name, last use, use count, state and source** without a path column in the terminal table. Use `inspect` or `--json` for full paths. `--json` includes canonical paths, shared-link information and scan issues. There is no separate `least-used` command.
 
 **เวลาการเรียกใช้:** แสดงจำนวนครั้งและเวลาล่าสุดจากหลักฐานใน log ที่ตรวจได้ เรียงอันดับตามจำนวนครั้งในช่วง 30 วัน ข้อมูลไม่ครบหรือระบุสกิลไม่ได้ยังเป็น `unknown` / `null` ไม่ใช้เวลาแก้ไขไฟล์หรือเวลาสแกนแทน และไม่ตีความว่าไม่เคยใช้
 
