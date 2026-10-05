@@ -48,7 +48,7 @@ function configPatch(before: string | null, skillFile: string, enabled: boolean)
 
 export function plan(options: Options, action: Action, selector: string): ChangePlan {
   if (!['remove', 'disable', 'enable'].includes(action)) throw new GoblinError('INVALID_ACTION');
-  const config = settings(options), catalog = scan(options), selected = inspect(catalog, selector);
+  const config = settings(options), catalog = scan(options, false), selected = inspect(catalog, selector);
   if (catalog.incomplete) throw new GoblinError('SCAN_INCOMPLETE', 'Mutations require a complete catalog.');
   const group = action === 'remove' ? catalog.skills.filter(s => s.canonical_path === selected.canonical_path) : [selected];
   if (group.some(s => s.managed || !s.fingerprint)) throw new GoblinError('MANAGED_SOURCE', selected.path);

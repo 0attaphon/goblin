@@ -4,8 +4,9 @@ import { parse as parseYaml } from 'yaml';
 import { parse as parseToml } from 'smol-toml';
 import { digest, exists, fingerprint, GoblinError, inside, readOptional, settings } from './files.js';
 import type { Catalog, Finding, Options, Root, Skill } from './types.js';
+import { observeUsage } from './usage.js';
 
-export function scan(options: Options = {}): Catalog {
+export function scan(options: Options = {}, includeUsage = true): Catalog {
   const config = settings(options);
   const catalog: Catalog = { scanned_at: new Date().toISOString(), skills: [], issues: [], incomplete: false };
   const allowed = config.roots.filter(r => exists(r.path)).map(r => fs.realpathSync(r.path));
@@ -70,7 +71,7 @@ export function scan(options: Options = {}): Catalog {
           managed: managed || unsafeMetadata || fp === null, is_link: lstat.isSymbolicLink(), link_target: lstat.isSymbolicLink() ? fs.readlinkSync(entry) : null,
           metadata_valid: metadataValid, fingerprint: fp,
           status: root.source === 'plugin' ? 'unknown' : root.provider === 'codex' && (disabled.has(skillFile) || disabled.has(path.join(canonical, 'SKILL.md'))) ? 'disabled' : 'enabled',
-          last_used_at: null, usage_count: null, usage_source: null, observation_start: null, observation_end: null, coverage: 'unknown',
+          last_used_at: null, usage_count: null, usage_rank: null, usage_source: null, observation_start: null, observation_end: null, coverage: 'unknown',
         });
         return;
       }
@@ -101,6 +102,7 @@ export function scan(options: Options = {}): Catalog {
     else walk(root.path, root, 0, new Set(), root.managed === true);
   }
   catalog.skills.sort((a, b) => a.path.localeCompare(b.path));
+  if (includeUsage) observeUsage(options, catalog);
   return catalog;
 }
 

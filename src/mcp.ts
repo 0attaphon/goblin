@@ -21,7 +21,8 @@ function guard(fn: () => unknown) {
 }
 function metadata(s: Skill) {
   return { id: s.id, name: s.name, path: s.path, source: s.source, provider: s.provider,
-    status: s.status, managed: s.managed, last_used_at: s.last_used_at, usage_count: s.usage_count };
+    status: s.status, managed: s.managed, last_used_at: s.last_used_at, usage_count: s.usage_count,
+    usage_rank: s.usage_rank, usage_source: s.usage_source, coverage: s.coverage };
 }
 function page(items: unknown[], cursor?: string, limit = 20, extra: Record<string, unknown> = {}) {
   const snapshot = digest(JSON.stringify(items));
@@ -49,9 +50,9 @@ const write = { readOnlyHint: false, destructiveHint: false, openWorldHint: fals
 export async function startMcp(options: Options): Promise<void> {
   const server = new McpServer({ name: 'goblin', version: '0.0.1' });
   server.registerTool('goblin_scan', { description: 'Scan local skills; paginated metadata, usage unknown without evidence.', inputSchema: paging, annotations: readOnly },
-    ({ cursor, limit }) => guard(() => { const c = scan(options); return page(c.skills.map(metadata), cursor, limit, { scanned_at: c.scanned_at, issue_count: c.issues.length, incomplete: c.incomplete }); }));
+    ({ cursor, limit }) => guard(() => { const c = scan(options); return page(c.skills.map(metadata), cursor, limit, { scanned_at: c.scanned_at, issue_count: c.issues.length, incomplete: c.incomplete, usage: c.usage }); }));
   server.registerTool('goblin_inspect', { description: 'Inspect one skill by ID or unique name; metadata only.', inputSchema: { selector: z.string().min(1).max(4096) }, annotations: readOnly },
-    ({ selector }) => guard(() => { const s = inspect(scan(options), selector); return { ...metadata(s), canonical_path: s.canonical_path, link_target: s.link_target, metadata_valid: s.metadata_valid, usage_source: null, coverage: 'unknown' }; }));
+    ({ selector }) => guard(() => { const s = inspect(scan(options), selector); return { ...metadata(s), canonical_path: s.canonical_path, link_target: s.link_target, metadata_valid: s.metadata_valid, observation_start: s.observation_start, observation_end: s.observation_end }; }));
   server.registerTool('goblin_tidy', { description: 'Find duplicates, shared references and broken metadata; no changes.', inputSchema: paging, annotations: readOnly },
     ({ cursor, limit }) => guard(() => page(audit(scan(options)), cursor, limit)));
   server.registerTool('goblin_plan', { description: 'Plan a reversible skill change. Returns affected paths; does not change skills.',

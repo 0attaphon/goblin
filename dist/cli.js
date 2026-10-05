@@ -8,7 +8,7 @@ const help = `Goblin 0.0.1 — Your little skill keeper.
 
 Usage: goblin <command> [arguments] [options]
 
-  scan / list                  Show skills; check and disable in a terminal
+  scan / list                  Rank observed usage; check and disable in terminal
   inspect <name-or-id>          Show metadata, shared target and capabilities
   tidy                         Report duplicates and broken references
   remove / stash <name-or-id>   Remove from discovery, retaining recoverable files
@@ -33,9 +33,9 @@ Unknown usage is not zero. No hooks or skill text are added.
 `;
 function clean(value) { return String(value).replace(/[\x00-\x1f\x7f-\x9f]/g, ' '); }
 function table(skills) {
-    console.log(['ID', 'NAME', 'PATH', 'LAST USED', 'USES', 'STATUS', 'SOURCE'].join('\t'));
+    console.log(['RANK', 'ID', 'NAME', 'PATH', 'LAST USED', 'USES', 'STATUS', 'SOURCE'].join('\t'));
     for (const s of skills)
-        console.log([s.id, s.name, s.path, 'unknown', 'unknown', s.status, s.source].map(clean).join('\t'));
+        console.log([s.usage_rank ?? 'unknown', s.id, s.name, s.path, s.last_used_at ?? 'unknown', s.usage_count ?? 'unknown', s.status, s.source].map(clean).join('\t'));
 }
 function printJson(value) { console.log(JSON.stringify(value, null, 2)); }
 export async function main(args = process.argv.slice(2)) {
@@ -146,7 +146,9 @@ export async function main(args = process.argv.slice(2)) {
         }
         else {
             table(catalog.skills);
-            console.log(`\n${catalog.skills.length} entries. Usage: unknown (no verified usage adapter in 0.0.1).`);
+            console.log(`\n${catalog.skills.length} entries. Ranked by observed successful tool calls over 30 days; unknown is not zero.`);
+            if (catalog.usage)
+                console.log(`Logs: ${catalog.usage.logs_scanned}. Coverage: partial${catalog.usage.limit_reached ? ' (read limits reached)' : ''}. Read issues: ${catalog.usage.read_issues}.`);
             if (catalog.issues.length)
                 console.error(`${catalog.issues.length} scan issues; use tidy or --json for details.`);
             if (catalog.incomplete)

@@ -6,11 +6,16 @@ export interface Skill {
   id: string; name: string; path: string; canonical_path: string; skill_file: string;
   provider: Provider; source: string; status: 'enabled' | 'disabled' | 'unknown'; managed: boolean;
   is_link: boolean; link_target: string | null; metadata_valid: boolean; fingerprint: string | null;
-  last_used_at: null; usage_count: null; usage_source: null;
-  observation_start: null; observation_end: null; coverage: 'unknown';
+  last_used_at: string | null; usage_count: number | null; usage_rank: number | null; usage_source: string | null;
+  observation_start: string | null; observation_end: string | null; coverage: 'unknown' | 'partial';
 }
 export interface Issue { code: string; path: string }
-export interface Catalog { scanned_at: string; skills: Skill[]; issues: Issue[]; incomplete: boolean }
+export interface UsageReport {
+  observation_start: string; observation_end: string; days: number;
+  logs_scanned: number; bytes_scanned: number; observed_calls: number;
+  read_issues: number; limit_reached: boolean; coverage: 'partial';
+}
+export interface Catalog { scanned_at: string; skills: Skill[]; issues: Issue[]; incomplete: boolean; usage?: UsageReport }
 export interface Finding { kind: string; ids: string[]; path?: string }
 export type Action = 'remove' | 'disable' | 'enable';
 export interface Move { from: string; to: string; fingerprint: string; is_link: boolean }

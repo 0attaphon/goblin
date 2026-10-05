@@ -44,7 +44,23 @@ These numbers measure prompt/context tokens for one single-response task, not co
 
 Evidence: [full A/B report](benchmarks/html-context/report.md), [measurements](benchmarks/html-context/results.json), [exact prompt](benchmarks/html-context/prompt.txt), [HTML checks](benchmarks/html-context/quality-checks.json), [baseline HTML](benchmarks/html-context/runs/pair-1-all/index.html), [focused HTML](benchmarks/html-context/runs/pair-1-focused/index.html).
 
-**Automated verification: 37/37 tests pass.** This includes 10 real terminal/PTY scenarios for multi-selection, cancellation, scrolling, stale selections, shared aliases and interrupted-write recovery. The remaining tests cover catalog safety, reversible changes, CLI and MCP. Tests use temporary fixture roots and never modify the user's installed skills. Python 3 is needed only to run the PTY tests; using Goblin requires Node.js and Git as described above.
+**Automated verification: 48/48 tests pass.** This includes 10 real terminal/PTY scenarios and 11 usage-evidence cases, covering successful calls, deduplication, failures, ambiguous names, exact loaded plugin versions and fabricated status rejection. The remaining tests cover catalog safety, reversible changes, CLI and MCP. Tests use temporary fixture roots and never modify the user's installed skills. Python 3 is needed only to run the PTY tests; using Goblin requires Node.js and Git as described above.
+
+## Real usage ranking
+
+```sh
+goblin scan --no-interactive
+goblin scan --json
+goblin inspect <name-or-id>
+```
+
+`scan` reads existing local **Codex and Claude Code session logs over the preceding 30 days**. The table shows **RANK**, observed **USES** and **LAST USED**. The checkbox list shows rank and count on each row; the focused row shows the latest observed use. Known skills appear first, sorted by observed call count, latest use and stable path. Shared aliases of one physical skill share its count and rank.
+
+Evidence includes successful Claude `Skill`/`Read` calls and recognizable successful shell reads of a specific `SKILL.md`. Claude's tool-linked loaded-directory metadata identifies the exact plugin version. Codex Desktop's literal, unconditional `exec_command` wrappers are parsed as JavaScript without running logged code. Failed calls, plain mentions, skill listings, ambiguous names, unmatched results, dynamic shell expressions, pipelines and semicolon command chains are excluded.
+
+**USES means observed successful tool invocations/reads, not completed tasks.** Loading a skill does not prove it contributed to the result. A `Skill` invocation and a separate `Read` are separate observations. Unsupported or implicitly loaded skills may not be recorded. Skills without attributable positive evidence retain `unknown` / `null`; absence of a record never becomes verified zero usage.
+
+Coverage is always **partial**. JSON reports the exact window, logs/bytes read, read issues and limits reached; inspect reports each skill's evidence source. Claude Desktop cloud usage is not inferred from Claude Code logs. Log parsing is read-only, local and bounded: 256 MiB total, 64 MiB per file, 1,000 files, 200,000 events, 2 MiB per line. Newest modified logs are read first when budgets are insufficient, so the ranking can represent a subset of the window. Raw conversation and skill bodies are not returned or stored. No hooks, skill instructions or LLM calls are added.
 
 ## Develop locally
 
@@ -116,7 +132,7 @@ goblin history
 
 `scan` immediately shows **ID, name, absolute path, last use, use count, state and source**. `--json` includes canonical paths, shared-link information and scan issues. There is no separate `least-used` command.
 
-**เวลาการเรียกใช้:** รุ่นนี้ยังไม่มีตัวอ่านหลักฐานการใช้สกิลจริง จึงแสดง `unknown` ในตาราง และ `null` ใน JSON ไม่ใช้เวลาแก้ไขไฟล์หรือเวลาสแกนแทน และไม่ตีความว่าไม่เคยใช้
+**เวลาการเรียกใช้:** แสดงจำนวนครั้งและเวลาล่าสุดจากหลักฐานใน log ที่ตรวจได้ เรียงอันดับตามจำนวนครั้งในช่วง 30 วัน ข้อมูลไม่ครบหรือระบุสกิลไม่ได้ยังเป็น `unknown` / `null` ไม่ใช้เวลาแก้ไขไฟล์หรือเวลาสแกนแทน และไม่ตีความว่าไม่เคยใช้
 
 `remove` / `stash` removes a manually installed skill from discovery and retains its original files in a recovery archive. It does **not** permanently delete files. A change ID is printed so that the exact change can be restored. An ambiguous name requires choosing an ID from `scan`.
 

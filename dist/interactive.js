@@ -51,17 +51,17 @@ async function selectSkills(catalog) {
             const current = catalog.skills[cursor];
             const lines = [
                 'Goblin — Select skills to disable in Codex',
-                `Selected: ${selected.size} | ${cursor + 1}/${catalog.skills.length} entries`,
+                `Selected: ${selected.size} | ${cursor + 1}/${catalog.skills.length} | Usage: 30 days, partial evidence`,
                 '↑↓ Move · Space Check · Enter Submit · Esc Cancel',
                 '',
                 ...catalog.skills.slice(start, start + height).map((s, index) => {
                     const i = start + index, mark = reasons[i] ? '–' : selected.has(i) ? 'x' : ' ';
-                    return `${i === cursor ? '>' : ' '} [${mark}] ${s.name} (${s.status})${reasons[i] ? ` — ${reasons[i]}` : ''}`;
+                    return `${i === cursor ? '>' : ' '} [${mark}] ${s.usage_rank ? `#${s.usage_rank} ` : ''}${s.name} (${s.usage_count ?? 'unknown'} calls, ${s.status})${reasons[i] ? ` — ${reasons[i]}` : ''}`;
                 }),
                 '',
                 `ID: ${current.id} | ${current.provider} / ${current.source}`,
                 `Path: ${current.path}`,
-                'Last used: unknown | Uses: unknown',
+                `Last used: ${current.last_used_at ?? 'unknown'} | Observed calls: ${current.usage_count ?? 'unknown'}`,
                 `Enter disables ${selected.size} selected. Restart Codex afterward.`,
             ];
             output.write('\x1b[H\x1b[2J' + lines.map(line).join('\r\n'));
@@ -112,7 +112,7 @@ async function selectSkills(catalog) {
     });
 }
 function assertFresh(options, selected, disabledByUs = new Set()) {
-    const fresh = scan(options);
+    const fresh = scan(options, false);
     for (const old of selected) {
         const current = fresh.skills.find(s => s.id === old.id);
         const covered = disabledByUs.has(old.canonical_path) && current?.status === 'disabled';
