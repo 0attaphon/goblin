@@ -1,5 +1,9 @@
 # HTML prompt A/B experiment
 
+![Measured token and time comparison](comparison.png)
+
+Charts: [PNG](comparison.png) · [SVG](comparison.svg). Rebuild from `results.json` with `python3 plot.py` (requires matplotlib; optional reporting dependency).
+
 The user requested real prompt runs comparing many installed skills with unused skills disabled. The user explicitly authorized the six external Codex calls using normally loaded skill contents.
 
 ## Protocol

@@ -24,6 +24,10 @@ The repository includes a ready-to-run CLI. You do not need to clone the reposit
 
 ## Measured results
 
+![Goblin A/B comparison: median input 19,246 vs 13,939 tokens, output 3,304 vs 3,010 tokens, elapsed 111.87 vs 101.01 seconds](benchmarks/html-context/comparison.png)
+
+[Download vector chart (SVG)](benchmarks/html-context/comparison.svg). Bars show medians; dots show individual output/time measurements. The input chart separates cached and uncached tokens.
+
 **5,307 fewer input tokens (27.57%)** in a real HTML-generation experiment on 2026-10-05. Six Codex CLI calls used the same Thai dashboard prompt and model (`gpt-6.1-sol`, medium reasoning), arranged as three pairs with alternating order. The baseline enabled 66 local skill candidates; the focused condition disabled those 66 candidates for the invocation because this self-contained task needed no optional skill.
 
 | Metric | 66 candidates enabled | 66 candidates disabled |
