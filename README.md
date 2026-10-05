@@ -6,9 +6,23 @@
 
 **Your little skill keeper.** A local AI skill manager for CLI, Codex and Claude Desktop. Version **0.0.1** is a first macOS release candidate; no hosted service or LLM API key is required.
 
-## Start locally
+## Install
 
-Requires Node.js 22 or newer.
+Requires Node.js 22 or newer and Git. Install with one command:
+
+```sh
+npm install --global github:ple41080/goblin
+```
+
+Then scan your installed skills:
+
+```sh
+goblin scan
+```
+
+npm builds the CLI automatically. You do not need to clone the repository or run the build yourself. Use the same install command to update; uninstall with `npm uninstall --global goblin-skill-manager`.
+
+## Develop locally
 
 ```sh
 cd goblin

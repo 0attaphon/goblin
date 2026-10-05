@@ -20,7 +20,8 @@
     "build": "tsc",
     "test": "npm run build && node --test test/*.test.mjs",
     "check": "tsc --noEmit",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.0",
@@ -31,5 +32,13 @@
   "devDependencies": {
     "@types/node": "^22.20.5",
     "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ple41080/goblin.git"
+  },
+  "homepage": "https://github.com/ple41080/goblin#readme",
+  "bugs": {
+    "url": "https://github.com/ple41080/goblin/issues"
   }
 }
