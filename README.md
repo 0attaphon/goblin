@@ -1,0 +1,132 @@
+<p align="center">
+  <img src="assets/goblin-logo-32bit.png" width="256" alt="Goblin — a friendly 32-bit pixel-art goblin keeping a box of skills organized">
+</p>
+
+# Goblin
+
+**Your little skill keeper.** A local AI skill manager for CLI, Codex and Claude Desktop. Version **0.0.1** is a first macOS release candidate; no hosted service or LLM API key is required.
+
+## Start locally
+
+Requires Node.js 22 or newer.
+
+```sh
+cd goblin
+npm ci --ignore-scripts
+npm run build
+node dist/cli.js scan
+```
+
+To install the command from the local project:
+
+```sh
+npm install --global .
+goblin --version
+goblin scan
+```
+
+To prepare a distributable tarball without publishing:
+
+```sh
+npm pack
+npm install --global ./goblin-skill-manager-0.0.1.tgz
+```
+
+The npm package name has not been reserved. No package has been published.
+
+## Commands
+
+```sh
+goblin scan
+goblin scan --json
+goblin scan --project /absolute/path/to/project
+goblin scan --root /absolute/path/to/skills
+goblin inspect <name-or-id>
+goblin tidy
+goblin remove <name-or-id> --dry-run
+goblin remove <name-or-id>
+goblin restore <change-id> --dry-run
+goblin restore <change-id>
+goblin disable <name-or-id> --app codex
+goblin enable <name-or-id> --app codex
+goblin history
+```
+
+`scan` immediately shows **ID, name, absolute path, last use, use count, state and source**. `--json` includes canonical paths, shared-link information and scan issues. There is no separate `least-used` command.
+
+**เวลาการเรียกใช้:** รุ่นนี้ยังไม่มีตัวอ่านหลักฐานการใช้สกิลจริง จึงแสดง `unknown` ในตาราง และ `null` ใน JSON ไม่ใช้เวลาแก้ไขไฟล์หรือเวลาสแกนแทน และไม่ตีความว่าไม่เคยใช้
+
+`remove` / `stash` removes a manually installed skill from discovery and retains its original files in a recovery archive. It does **not** permanently delete files. A change ID is printed so that the exact change can be restored. An ambiguous name requires choosing an ID from `scan`.
+
+If the same physical skill is referenced by several discovered paths, removal affects that group of references across the configured roots. Preview with `--dry-run` to see those paths. Exact copies are separate skills; Goblin does not delete duplicates automatically. References outside configured roots cannot be enumerated or managed.
+
+Plugin caches, bundled/system skills, synced sources and nested directory aliases are read-only. Plugin cache entries have unknown activation status; a cached version is not proof that the host loads it. Native `disable` / `enable` currently supports manually installed Codex skills only. It edits the selected `[[skills.config]]` entry while preserving other config text. Symlinked config files, multiline TOML strings, unsupported or invalid TOML formats are refused. Restart Codex after changing its skill configuration.
+
+## Roots and state
+
+Default discovery roots:
+
+- `~/.agents/skills` — Codex/shared user skills
+- `~/.claude/skills` — local Claude Code skills
+- `~/.codex/skills` — legacy Codex skills, including read-only `.system`
+- `~/.codex/plugins/cache` and `~/.claude/plugins/cache` — read-only plugin skills
+
+`--root` replaces the defaults and is repeatable. `--project` adds the specified project's `.agents/skills` and `.claude/skills`; parent repository roots are not automatically searched in this release.
+
+On macOS, plans, journals and archives live in `~/Library/Application Support/Goblin`. Elsewhere they default to `~/.local/share/goblin`. Override with `--data-dir` or `GOBLIN_DATA_DIR`. State must be separate from every discovery root. Keep using the same roots and state directory when applying or restoring a change.
+
+Scan limits: 20,000 visited entries, depth 10; per-skill fingerprint limits: 10,000 files, depth 32, 64 MiB total file bytes. Oversized or unreadable skills remain read-only. Skill scripts are never executed.
+
+## Connect Codex and Claude Desktop
+
+Print connection settings using the executable path on your machine:
+
+```sh
+goblin setup codex --print
+goblin setup claude-desktop --print
+```
+
+For Codex, add the printed `[mcp_servers.goblin]` table to your MCP configuration. For Claude Desktop, merge the printed `goblin` entry into `mcpServers` in `~/Library/Application Support/Claude/claude_desktop_config.json`, preserving other entries. Restart the client after adding the connection.
+
+`setup` only prints settings. It does not change your client configuration or install a skill. Absolute Node.js and script paths avoid differences between the terminal and desktop application's PATH.
+
+You can request “scan my skills” or “remove skill ID sk_…” in the connected client. MCP exposes seven fixed tools: `goblin_scan`, `goblin_inspect`, `goblin_tidy`, `goblin_plan`, `goblin_apply`, `goblin_restore`, `goblin_history`. Changes use a plan ID before applying. `goblin_plan` can page affected entries using `plan_id` and `cursor`.
+
+Claude Desktop is a control surface for **local files** here. Skills uploaded to Claude's cloud account are outside this version's scope. The MCP server is verified against an SDK client; connections in the actual Codex and Claude Desktop UIs still require a host smoke test.
+
+## Context/token contract
+
+- Goblin never edits skill instructions or adds wrappers, hooks, project instructions or dependencies to another skill.
+- Scanning, hashing, grouping and auditing happen locally, without LLM calls.
+- Indexes/history/archive are outside skill discovery roots, so they do not create new skills for AI to load.
+- MCP tool definitions are fixed, not generated per skill. No skill bodies are returned.
+- MCP metadata responses are paginated, at most 20 items per page by default, with an 8 KiB serialized tool-result ceiling. Cursors are invalidated when the corresponding dataset changes.
+- Direct terminal use requires no model context. Calling through an AI host has Goblin's own tool-definition/result overhead; **zero total token overhead is not claimed**.
+
+## Recovery
+
+Goblin journals a change before moving files, verifies stale plans and uses an exclusive state-directory lock. Restore refuses modified archive contents and will never intentionally overwrite a new skill at the original path. Interrupted changes block new mutations until recovered.
+
+```sh
+goblin history
+goblin restore <interrupted-change-id> --dry-run
+goblin restore <interrupted-change-id>
+```
+
+If a process crashes while holding the lock, confirm no Goblin process is running, inspect `lock/owner.json` in the state directory, then remove **only that stale lock directory** and use `history` / `restore`. Never delete the archive/journal to resolve a lock. Do not run a plugin/sync installer concurrently with Goblin.
+
+Cross-filesystem moves use a verified staging copy. If an interruption leaves a `.copy` staging artifact, preserve it while checking history; restore uses the original/committed archive and leaves incomplete staging data for inspection. If deletion of the original was interrupted and leaves a partial source, restore refuses that conflict. Preserve the partial source by moving it to a separate location outside discovery roots, then run restore again; compare the preserved files before discarding anything. Archives may retain files containing secrets: keep the state directory private and do not publish it. Unrelated edits to config after a change cause restore to refuse replacing that config; resolve that conflict manually.
+
+## Development
+
+The paired HTML experiment is available in `benchmarks/html-context/report.md` and `report.html` in the source tree. With 66 local Codex skill candidates and the same prompt/model, input tokens were 19,246 with candidates enabled and 13,939 with candidates disabled in all three pairs: 5,307 fewer tokens (27.57%). This single-response test excludes user plugin/MCP configuration and Goblin's MCP overhead. It is not a universal saving guarantee. No installed skill files were changed.
+
+```sh
+npm test
+npm run check
+npm pack
+```
+
+Tests use temporary fixture roots, including real filesystem symlinks and MCP SDK client/server processes. They never remove the user's installed skills. Actual account usage data, cloud skills, profiles and permanent deletion are outside 0.0.1.
+
+Protocol and host references: [MCP server guide](https://modelcontextprotocol.io/docs/develop/build-server), [Codex MCP](https://developers.openai.com/codex/mcp/), [Codex skill configuration](https://developers.openai.com/codex/skills/).

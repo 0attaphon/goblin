@@ -1,0 +1,161 @@
+{
+  "version": "0.0.1",
+  "started_at": "2026-10-05T03:14:23.173542+00:00",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "pairs": 3,
+  "prompt_sha256": "228282e4771e571a1d50af677bc5f6e3fbeda5f0413f7f771102c3b145655e14",
+  "candidate_count": 66,
+  "cli_version": "codex-cli 0.159.2",
+  "conditions": {
+    "all": "Local Codex candidates enabled by per-invocation config; user config/plugins/MCP excluded in both arms.",
+    "focused": "Same candidates disabled per invocation. This standalone HTML task requires no optional skill."
+  },
+  "scope": "Single-response HTML generation, tools explicitly excluded. Counts from turn.completed usage; not byte estimates.",
+  "runs": [
+    {
+      "pair": 1,
+      "condition": "all",
+      "exit_code": 0,
+      "seconds": 114.16,
+      "usage": {
+        "input_tokens": 19246,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3511,
+        "reasoning_output_tokens": 87
+      },
+      "html_bytes": 13179,
+      "html_document": true,
+      "tool_items": 0,
+      "run_dir": "runs/pair-1-all"
+    },
+    {
+      "pair": 1,
+      "condition": "focused",
+      "exit_code": 0,
+      "seconds": 101.01,
+      "usage": {
+        "input_tokens": 13939,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3137,
+        "reasoning_output_tokens": 61
+      },
+      "html_bytes": 11826,
+      "html_document": true,
+      "tool_items": 0,
+      "run_dir": "runs/pair-1-focused"
+    },
+    {
+      "pair": 2,
+      "condition": "focused",
+      "exit_code": 0,
+      "seconds": 108.67,
+      "usage": {
+        "input_tokens": 13939,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3010,
+        "reasoning_output_tokens": 67
+      },
+      "html_bytes": 11430,
+      "html_document": true,
+      "tool_items": 0,
+      "run_dir": "runs/pair-2-focused"
+    },
+    {
+      "pair": 2,
+      "condition": "all",
+      "exit_code": 0,
+      "seconds": 111.87,
+      "usage": {
+        "input_tokens": 19246,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3304,
+        "reasoning_output_tokens": 68
+      },
+      "html_bytes": 12593,
+      "html_document": true,
+      "tool_items": 0,
+      "run_dir": "runs/pair-2-all"
+    },
+    {
+      "pair": 3,
+      "condition": "all",
+      "exit_code": 0,
+      "seconds": 95.53,
+      "usage": {
+        "input_tokens": 19246,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2830,
+        "reasoning_output_tokens": 74
+      },
+      "html_bytes": 10337,
+      "html_document": true,
+      "tool_items": 0,
+      "run_dir": "runs/pair-3-all"
+    },
+    {
+      "pair": 3,
+      "condition": "focused",
+      "exit_code": 0,
+      "seconds": 99.43,
+      "usage": {
+        "input_tokens": 13939,
+        "cached_input_tokens": 12288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2941,
+        "reasoning_output_tokens": 51
+      },
+      "html_bytes": 11140,
+      "html_document": true,
+      "tool_items": 0,
+      "run_dir": "runs/pair-3-focused"
+    }
+  ],
+  "skill_files_unchanged": true,
+  "summary": {
+    "all": {
+      "input_tokens": {
+        "median": 19246,
+        "min": 19246,
+        "max": 19246
+      },
+      "cached_input_tokens": {
+        "median": 12288,
+        "min": 12288,
+        "max": 12288
+      },
+      "output_tokens": {
+        "median": 3304,
+        "min": 2830,
+        "max": 3511
+      },
+      "seconds": 111.87
+    },
+    "focused": {
+      "input_tokens": {
+        "median": 13939,
+        "min": 13939,
+        "max": 13939
+      },
+      "cached_input_tokens": {
+        "median": 12288,
+        "min": 12288,
+        "max": 12288
+      },
+      "output_tokens": {
+        "median": 3010,
+        "min": 2941,
+        "max": 3137
+      },
+      "seconds": 101.01
+    },
+    "median_input_reduction": 5307,
+    "median_input_reduction_percent": 27.57
+  },
+  "publication_note": "Local candidate paths omitted for publication; measurements are unchanged."
+}

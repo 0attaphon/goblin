@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Lantern — แดชบอร์ดงานทีม</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: #24352f;
+      background: #f4f6f2;
+      line-height: 1.6;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1100px; margin: auto; padding: 44px 24px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .eyebrow { margin: 0; color: #52645b; font-size: .85rem; font-weight: 600; }
+    h1 { margin: 4px 0; font-size: clamp(2rem, 6vw, 3rem); letter-spacing: -.04em; }
+    .subtitle { margin: 0; color: #52645b; }
+    .date {
+      padding: 10px 16px;
+      border: 1px solid #d5ded5;
+      border-radius: 12px;
+      background: #fff;
+      white-space: nowrap;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .card {
+      padding: 22px;
+      background: #fff;
+      border: 1px solid #d5ded5;
+      border-radius: 16px;
+    }
+    .card dt { color: #52645b; font-weight: 600; }
+    .card dd { margin: 8px 0 0; font-size: 2.5rem; font-weight: 750; line-height: 1.2; }
+    .card.complete { background: #e8f2e9; }
+    .card.pending { background: #fff3d8; }
+    .panel {
+      background: #fff;
+      border: 1px solid #d5ded5;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .panel-top { padding: 24px; }
+    h2 { margin: 0 0 4px; font-size: 1.25rem; }
+    .hint { margin: 0; color: #52645b; font-size: .9rem; }
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    label { display: block; margin-bottom: 6px; font-size: .9rem; font-weight: 650; }
+    input, select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #aebdb1;
+      border-radius: 9px;
+      background: #fff;
+      color: #24352f;
+      font: inherit;
+    }
+    input::placeholder { color: #62716a; }
+    :focus-visible { outline: 3px solid #367454; outline-offset: 3px; }
+    .result { margin: 16px 0 0; color: #52645b; font-size: .9rem; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    caption {
+      text-align: left;
+      padding: 0 24px 12px;
+      color: #52645b;
+      font-size: .85rem;
+    }
+    th {
+      padding: 12px 24px;
+      background: #f0f4ee;
+      color: #42554b;
+      font-size: .85rem;
+      white-space: nowrap;
+    }
+    td { padding: 18px 24px; border-top: 1px solid #e1e7e0; }
+    td:first-child { font-weight: 600; }
+    td:last-child { white-space: nowrap; }
+    .badge {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .done { color: #245636; background: #e3f0e6; }
+    .working { color: #28546d; background: #e4eff6; }
+    .waiting { color: #79520a; background: #fff0ce; }
+    .empty { padding: 30px 24px; margin: 0; text-align: center; color: #52645b; }
+    [hidden] { display: none !important; }
+    footer { margin-top: 20px; color: #52645b; font-size: .8rem; }
+    @media (max-width: 640px) {
+      main { padding: 24px 16px; }
+      header { align-items: flex-start; flex-direction: column; gap: 16px; }
+      .summary { gap: 8px; }
+      .card { padding: 16px 10px; border-radius: 12px; }
+      .card dt { font-size: .8rem; }
+      .card dd { font-size: 2rem; }
+      .panel-top { padding: 20px 16px; }
+      .filters { grid-template-columns: 1fr; }
+      th, td { padding: 14px 16px; }
+      table { min-width: 650px; }
+      caption { padding-left: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">แดชบอร์ดงานทีม</p>
+        <h1>Lantern</h1>
+        <p class="subtitle">ภาพรวมงานของทีม Lantern</p>
+      </div>
+      <time class="date" datetime="2026-10-05">5 ตุลาคม 2026</time>
+    </header>
+
+    <dl class="summary" aria-label="สรุปงานทั้งหมดของทีม">
+      <div class="card">
+        <dt>งานทั้งหมด</dt>
+        <dd>24</dd>
+      </div>
+      <div class="card complete">
+        <dt>เสร็จแล้ว</dt>
+        <dd>16</dd>
+      </div>
+      <div class="card pending">
+        <dt>รอดำเนินการ</dt>
+        <dd>8</dd>
+      </div>
+    </dl>
+
+    <section class="panel" aria-labelledby="tasks-heading">
+      <div class="panel-top">
+        <h2 id="tasks-heading">รายการงาน</h2>
+        <p class="hint">ค้นหาจากชื่องานหรือผู้รับผิดชอบ และกรองตามสถานะ</p>
+
+        <div class="filters" role="search" aria-label="ค้นหาและกรองงาน">
+          <div>
+            <label for="task-search">ค้นหางาน</label>
+            <input id="task-search" type="search" placeholder="พิมพ์ชื่องานหรือผู้รับผิดชอบ…" autocomplete="off" aria-controls="task-table">
+          </div>
+          <div>
+            <label for="status-filter">สถานะ</label>
+            <select id="status-filter" aria-controls="task-table">
+              <option value="all">ทุกสถานะ</option>
+              <option value="done">เสร็จแล้ว</option>
+              <option value="working">กำลังดำเนินการ</option>
+              <option value="waiting">รอดำเนินการ</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="result" id="result-count" role="status" aria-live="polite" aria-atomic="true">แสดง 5 จาก 5 งานตัวอย่าง</p>
+      </div>
+
+      <div class="table-wrap" tabindex="0" role="region" aria-label="ตารางงาน เลื่อนแนวนอนได้บนหน้าจอขนาดเล็ก">
+        <table id="task-table">
+          <caption>งานตัวอย่าง 5 รายการจากทั้งหมด 24 งาน · ตัวเลขสรุปด้านบนเป็นภาพรวมของทีม</caption>
+          <thead>
+            <tr>
+              <th scope="col">งาน</th>
+              <th scope="col">ผู้รับผิดชอบ</th>
+              <th scope="col">สถานะ</th>
+              <th scope="col">กำหนดส่ง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-status="done">
+              <td>จัดทำแผนงานประจำเดือน</td>
+              <td>มินตรา</td>
+              <td><span class="badge done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-02">2 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="done">
+              <td>ออกแบบหน้าต้อนรับ</td>
+              <td>ภาคิน</td>
+              <td><span class="badge done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-03">3 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="done">
+              <td>ตรวจทานคู่มือทีม</td>
+              <td>ณิชา</td>
+              <td><span class="badge done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-04">4 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="working">
+              <td>พัฒนาหน้าสรุปรายงาน</td>
+              <td>ธันวา</td>
+              <td><span class="badge working">กำลังดำเนินการ</span></td>
+              <td><time datetime="2026-10-08">8 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="waiting">
+              <td>เตรียมการประชุมสรุปโครงการ</td>
+              <td>อริน</td>
+              <td><span class="badge waiting">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-12">12 ต.ค. 2026</time></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="empty" id="empty-state" hidden>ไม่พบงานที่ตรงกับการค้นหา ลองเปลี่ยนคำค้นหาหรือสถานะ</p>
+    </section>
+
+    <footer>Lantern · ทีมและข้อมูลทั้งหมดเป็นตัวอย่างสมมติ</footer>
+  </main>
+
+  <script>
+    (() => {
+      const search = document.getElementById('task-search');
+      const filter = document.getElementById('status-filter');
+      const rows = Array.from(document.querySelectorAll('#task-table tbody tr'));
+      const result = document.getElementById('result-count');
+      const empty = document.getElementById('empty-state');
+      const normalize = value => value.normalize('NFC').toLocaleLowerCase('th').trim();
+
+      function updateTasks() {
+        const query = normalize(search.value);
+        const status = filter.value;
+        let visible = 0;
+
+        rows.forEach(row => {
+          const searchable = normalize(
+            row.cells[0].textContent + ' ' + row.cells[1].textContent
+          );
+          const matches = searchable.includes(query) &&
+            (status === 'all' || row.dataset.status === status);
+          row.hidden = !matches;
+          if (matches) visible++;
+        });
+
+        result.textContent = `แสดง ${visible} จาก ${rows.length} งานตัวอย่าง`;
+        empty.hidden = visible !== 0;
+      }
+
+      search.addEventListener('input', updateTasks);
+      filter.addEventListener('change', updateTasks);
+      updateTasks();
+    })();
+  </script>
+</body>
+</html>

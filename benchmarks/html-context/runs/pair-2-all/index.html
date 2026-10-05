@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Lantern — แดชบอร์ดงานทีม</title>
+  <style>
+    :root {
+      --background: #f5f6fa;
+      --surface: #ffffff;
+      --text: #172033;
+      --muted: #586477;
+      --border: #dce2eb;
+      --accent: #5141a5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-block: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: #eeeafb;
+      color: var(--accent);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 750;
+      letter-spacing: -0.5px;
+    }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 14px; }
+    p { margin: 0; }
+
+    main { padding-block: 36px 48px; }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(26px, 4vw, 34px);
+      letter-spacing: -0.7px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-block: 26px 30px;
+    }
+
+    .stat {
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .stat dt {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .stat dd {
+      margin: 8px 0 0;
+      font-size: 38px;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .stat.done dd { color: #176044; }
+    .stat.pending dd { color: #875000; }
+
+    .panel {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .panel-heading { padding: 24px 24px 0; }
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: 21px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 16px;
+      padding: 22px 24px 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #aeb8c8;
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 16px;
+    }
+
+    input::placeholder { color: #657186; }
+
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .result-count {
+      padding: 0 24px 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    caption {
+      padding: 12px 24px;
+      background: #f8f9fc;
+      color: var(--muted);
+      text-align: left;
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    th, td {
+      padding: 17px 24px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    thead th {
+      background: #f8f9fc;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    tbody th {
+      font-weight: 600;
+      min-width: 230px;
+    }
+
+    td { white-space: nowrap; }
+    tbody tr:last-child > * { border-bottom: 0; }
+    tbody tr:hover { background: #faf9fe; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .badge.done { background: #e3f3eb; color: #176044; }
+    .badge.progress { background: #e9edfc; color: #344b91; }
+    .badge.pending { background: #fff1d6; color: #805000; }
+
+    .empty {
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    [hidden] { display: none !important; }
+
+    footer {
+      padding-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .container { width: calc(100% - 28px); }
+      .header-content { align-items: flex-start; flex-direction: column; gap: 12px; }
+      main { padding-top: 26px; }
+      .summary { gap: 8px; }
+      .stat { padding: 15px 10px; border-radius: 12px; }
+      .stat dt { font-size: 12px; }
+      .stat dd { font-size: 30px; }
+      .panel-heading { padding: 20px 16px 0; }
+      .filters { grid-template-columns: 1fr; padding: 18px 16px 14px; }
+      .result-count { padding-inline: 16px; }
+      th, td { padding: 15px 16px; }
+      caption { padding-inline: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-content">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">L</span>
+        <div>
+          <p class="brand-name">Lantern</p>
+          <p class="muted small">ทีม Lantern · พื้นที่ทำงานของทีม</p>
+        </div>
+      </div>
+      <p class="muted small">วันที่ตัวอย่าง <time datetime="2026-10-05">5 ตุลาคม 2026</time></p>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>ภาพรวมงานของทีม</h1>
+    <p class="muted">ติดตามความคืบหน้าและกำหนดส่งของทีม Lantern</p>
+
+    <dl class="summary" aria-label="สรุปงานทั้งหมดของทีม">
+      <div class="stat">
+        <dt>งานทั้งหมด</dt>
+        <dd>24</dd>
+      </div>
+      <div class="stat done">
+        <dt>เสร็จแล้ว</dt>
+        <dd>16</dd>
+      </div>
+      <div class="stat pending">
+        <dt>รอดำเนินการ</dt>
+        <dd>8</dd>
+      </div>
+    </dl>
+
+    <section class="panel" aria-labelledby="tasks-heading">
+      <div class="panel-heading">
+        <h2 id="tasks-heading">รายการงาน</h2>
+        <p class="muted small">แสดงงานตัวอย่าง 5 รายการจากทั้งหมด 24 งาน</p>
+      </div>
+
+      <div class="filters" role="search" aria-label="ค้นหาและกรองงานตัวอย่าง">
+        <div>
+          <label for="task-search">ค้นหางานหรือผู้รับผิดชอบ</label>
+          <input id="task-search" type="search" placeholder="พิมพ์ชื่องานหรือชื่อผู้รับผิดชอบ…" autocomplete="off" aria-controls="task-table">
+        </div>
+        <div>
+          <label for="status-filter">สถานะงาน</label>
+          <select id="status-filter" aria-controls="task-table">
+            <option value="all">ทุกสถานะ</option>
+            <option value="done">เสร็จแล้ว</option>
+            <option value="progress">กำลังดำเนินการ</option>
+            <option value="pending">รอดำเนินการ</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="result-count" class="result-count" role="status" aria-live="polite" aria-atomic="true">แสดง 5 จาก 5 งานตัวอย่าง</p>
+
+      <div class="table-wrap" role="region" aria-label="ตารางงานตัวอย่าง เลื่อนแนวนอนได้บนหน้าจอขนาดเล็ก" tabindex="0">
+        <table id="task-table">
+          <caption>งานตัวอย่างของทีม Lantern · ข้อมูลสมมติทั้งหมด</caption>
+          <thead>
+            <tr>
+              <th scope="col">ชื่องาน</th>
+              <th scope="col">ผู้รับผิดชอบ</th>
+              <th scope="col">สถานะ</th>
+              <th scope="col">กำหนดส่ง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-status="done">
+              <th scope="row">จัดทำแผนงานประจำเดือน</th>
+              <td>มินตรา</td>
+              <td><span class="badge done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-02">2 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="done">
+              <th scope="row">สรุปผลการประชุมทีม</th>
+              <td>ธันวา</td>
+              <td><span class="badge done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-04">4 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="progress">
+              <th scope="row">ออกแบบหน้าแนะนำโครงการ</th>
+              <td>พิมพ์ชนก</td>
+              <td><span class="badge progress">กำลังดำเนินการ</span></td>
+              <td><time datetime="2026-10-08">8 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="pending">
+              <th scope="row">ตรวจทานคู่มือการทำงาน</th>
+              <td>กวิน</td>
+              <td><span class="badge pending">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-10">10 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="pending">
+              <th scope="row">เตรียมกิจกรรมแลกเปลี่ยนความรู้</th>
+              <td>อริสา</td>
+              <td><span class="badge pending">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-12">12 ต.ค. 2026</time></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="empty-state" class="empty" hidden>ไม่พบงานที่ตรงกับการค้นหา ลองเปลี่ยนคำค้นหรือเลือกสถานะอื่น</p>
+      <noscript>
+        <p class="empty">เปิดใช้งาน JavaScript เพื่อค้นหาและกรองรายการงาน</p>
+      </noscript>
+    </section>
+
+    <footer>แดชบอร์ดสาธิต · ตัวเลขสรุปเป็นภาพรวมของทีม การค้นหาและตัวกรองใช้กับงานตัวอย่าง 5 รายการ</footer>
+  </main>
+
+  <script>
+    (() => {
+      const search = document.getElementById("task-search");
+      const status = document.getElementById("status-filter");
+      const rows = Array.from(document.querySelectorAll("#task-table tbody tr"));
+      const resultCount = document.getElementById("result-count");
+      const emptyState = document.getElementById("empty-state");
+      const normalize = value => value.normalize("NFC").toLocaleLowerCase("th").trim();
+
+      const tasks = rows.map(row => ({
+        row,
+        text: normalize(row.cells[0].textContent + " " + row.cells[1].textContent),
+        status: row.dataset.status
+      }));
+
+      function filterTasks() {
+        const terms = normalize(search.value).split(/\s+/).filter(Boolean);
+        let visible = 0;
+
+        for (const task of tasks) {
+          const matchesSearch = terms.every(term => task.text.includes(term));
+          const matchesStatus = status.value === "all" || task.status === status.value;
+          task.row.hidden = !(matchesSearch && matchesStatus);
+          if (!task.row.hidden) visible++;
+        }
+
+        resultCount.textContent = `แสดง ${visible} จาก ${tasks.length} งานตัวอย่าง`;
+        emptyState.hidden = visible !== 0;
+      }
+
+      search.addEventListener("input", filterTasks);
+      status.addEventListener("change", filterTasks);
+      filterTasks();
+    })();
+  </script>
+</body>
+</html>

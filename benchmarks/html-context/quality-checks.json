@@ -1,0 +1,83 @@
+{
+  "basic_checks": [
+    {
+      "pair": 1,
+      "condition": "all",
+      "has_html_document": true,
+      "has_inline_css_and_js": true,
+      "table_rows_including_header": 7,
+      "has_search_and_status_controls": true,
+      "all_controls_labeled": true,
+      "external_assets": []
+    },
+    {
+      "pair": 1,
+      "condition": "focused",
+      "has_html_document": true,
+      "has_inline_css_and_js": true,
+      "table_rows_including_header": 6,
+      "has_search_and_status_controls": true,
+      "all_controls_labeled": true,
+      "external_assets": []
+    },
+    {
+      "pair": 2,
+      "condition": "focused",
+      "has_html_document": true,
+      "has_inline_css_and_js": true,
+      "table_rows_including_header": 6,
+      "has_search_and_status_controls": true,
+      "all_controls_labeled": true,
+      "external_assets": []
+    },
+    {
+      "pair": 2,
+      "condition": "all",
+      "has_html_document": true,
+      "has_inline_css_and_js": true,
+      "table_rows_including_header": 6,
+      "has_search_and_status_controls": true,
+      "all_controls_labeled": true,
+      "external_assets": []
+    },
+    {
+      "pair": 3,
+      "condition": "all",
+      "has_html_document": true,
+      "has_inline_css_and_js": true,
+      "table_rows_including_header": 6,
+      "has_search_and_status_controls": true,
+      "all_controls_labeled": true,
+      "external_assets": []
+    },
+    {
+      "pair": 3,
+      "condition": "focused",
+      "has_html_document": true,
+      "has_inline_css_and_js": true,
+      "table_rows_including_header": 6,
+      "has_search_and_status_controls": true,
+      "all_controls_labeled": true,
+      "external_assets": []
+    }
+  ],
+  "browser_checks": [
+    {
+      "pair": 1,
+      "condition": "all",
+      "search": "มินตรา",
+      "search_visible_rows": 1,
+      "status": "เสร็จแล้ว",
+      "status_visible_rows": 2
+    },
+    {
+      "pair": 1,
+      "condition": "focused",
+      "search": "พิมพ์ชนก",
+      "search_visible_rows": 1,
+      "status": "เสร็จแล้ว",
+      "status_visible_rows": 2
+    }
+  ],
+  "browser_evidence": "Observed using Codex in-app browser accessibility snapshots on localhost, 2026-10-05. Browser checks cover pair 1 only; no full visual-quality equivalence claimed."
+}

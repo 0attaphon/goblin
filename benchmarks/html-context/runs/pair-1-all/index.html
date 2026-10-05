@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Lantern — Dashboard งานทีม</title>
+  <style>
+    :root {
+      --background: #f5f6f8;
+      --surface: #ffffff;
+      --text: #192536;
+      --muted: #566479;
+      --border: #dce2ea;
+      --accent: #714c0c;
+      --accent-light: #fff3d8;
+      --green: #17613f;
+      --green-light: #e5f5ec;
+      --blue: #23598b;
+      --blue-light: #eaf2fc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 44px 0;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .identity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      border: 1px solid #e7ca88;
+      border-radius: 16px;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    h1, h2, p { margin: 0; }
+    h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.25; }
+    h2 { font-size: 21px; }
+
+    .subtitle, .date-label, .section-description, .results, footer {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .subtitle { margin-top: 5px; }
+    .date-block { text-align: right; }
+    .date-block time { display: block; font-weight: 600; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 0 0 28px;
+    }
+
+    .stat {
+      padding: 22px 24px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .stat dt { color: var(--muted); font-size: 15px; }
+    .stat dd { margin: 8px 0 0; font-size: 38px; font-weight: 750; line-height: 1.2; }
+    .stat.done dd { color: var(--green); }
+    .stat.pending dd { color: var(--accent); }
+
+    .task-panel {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+    }
+
+    .panel-header { padding: 24px 24px 18px; }
+    .section-description { margin-top: 4px; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 18px;
+      padding: 0 24px 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #aebaca;
+      border-radius: 10px;
+      background: white;
+      color: var(--text);
+      font: inherit;
+      font-size: 15px;
+    }
+
+    input::placeholder { color: #647184; }
+
+    :focus-visible {
+      outline: 3px solid #23598b;
+      outline-offset: 3px;
+    }
+
+    .results { padding: 0 24px 16px; }
+
+    .table-scroll { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    caption {
+      padding: 12px 24px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: left;
+      border-top: 1px solid var(--border);
+    }
+
+    th, td { padding: 17px 24px; }
+
+    thead th {
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    tbody th, tbody td {
+      border-bottom: 1px solid #edf0f4;
+      font-size: 14px;
+    }
+
+    tbody th { font-weight: 600; }
+    tbody tr:last-child > * { border-bottom: 0; }
+    tbody tr:hover { background: #fafbfd; }
+    td time { white-space: nowrap; }
+    .owner { white-space: nowrap; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      content: "";
+    }
+
+    .status.done { background: var(--green-light); color: var(--green); }
+    .status.active { background: var(--blue-light); color: var(--blue); }
+    .status.pending { background: var(--accent-light); color: var(--accent); }
+
+    .empty td { padding: 36px 24px; text-align: center; color: var(--muted); }
+    [hidden] { display: none !important; }
+    footer { padding-top: 20px; text-align: center; }
+    noscript p { padding: 0 24px 18px; color: var(--accent); }
+
+    @media (max-width: 680px) {
+      main { width: calc(100% - 28px); padding: 26px 0; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .date-block { text-align: left; }
+      .date-block time { display: inline; margin-left: 8px; }
+      .summary { gap: 10px; }
+      .stat { padding: 16px 12px; border-radius: 14px; }
+      .stat dt { font-size: 12px; }
+      .stat dd { font-size: 30px; }
+      .filters { grid-template-columns: 1fr; gap: 14px; }
+      .panel-header { padding: 20px 18px 16px; }
+      .filters { padding: 0 18px 18px; }
+      .results { padding: 0 18px 16px; }
+      th, td { padding: 15px 18px; }
+      table { min-width: 650px; }
+      caption { padding: 12px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="page-header">
+      <div class="identity">
+        <div class="brand-mark" aria-hidden="true">L</div>
+        <div>
+          <h1>Lantern</h1>
+          <p class="subtitle">Dashboard งานทีม · ทีม Lantern</p>
+        </div>
+      </div>
+      <div class="date-block">
+        <span class="date-label">วันที่ตัวอย่าง</span>
+        <time datetime="2026-10-05">5 ตุลาคม 2026</time>
+      </div>
+    </header>
+
+    <dl class="summary" aria-label="สรุปงานทั้งหมดของทีม">
+      <div class="stat">
+        <dt>งานทั้งหมด</dt>
+        <dd>24</dd>
+      </div>
+      <div class="stat done">
+        <dt>เสร็จแล้ว</dt>
+        <dd>16</dd>
+      </div>
+      <div class="stat pending">
+        <dt>รอดำเนินการ</dt>
+        <dd>8</dd>
+      </div>
+    </dl>
+
+    <section class="task-panel" aria-labelledby="tasks-heading">
+      <div class="panel-header">
+        <h2 id="tasks-heading">งานของทีม</h2>
+        <p class="section-description">แสดงงานตัวอย่าง 5 งานจากทั้งหมด 24 งาน · ค้นหาจากชื่องานหรือผู้รับผิดชอบ</p>
+      </div>
+
+      <div class="filters" role="search" aria-label="ค้นหาและกรองงาน">
+        <div>
+          <label for="task-search">ค้นหางานหรือผู้รับผิดชอบ</label>
+          <input
+            id="task-search"
+            type="search"
+            placeholder="เช่น ออกแบบ หรือ มินตรา"
+            autocomplete="off"
+            aria-controls="task-table"
+          >
+        </div>
+        <div>
+          <label for="status-filter">สถานะงาน</label>
+          <select id="status-filter" aria-controls="task-table">
+            <option value="all">ทุกสถานะ</option>
+            <option value="pending">รอดำเนินการ</option>
+            <option value="active">กำลังดำเนินการ</option>
+            <option value="done">เสร็จแล้ว</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="results-count" class="results" role="status" aria-live="polite" aria-atomic="true">
+        แสดง 5 จาก 5 งานตัวอย่าง
+      </p>
+
+      <noscript>
+        <p>เปิดใช้งาน JavaScript เพื่อค้นหาและกรองงาน</p>
+      </noscript>
+
+      <div class="table-scroll" tabindex="0" role="region" aria-label="ตารางงาน เลื่อนแนวนอนได้บนมือถือ">
+        <table id="task-table">
+          <caption>รายการงานตัวอย่าง · ตัวกรองมีผลเฉพาะตารางนี้</caption>
+          <thead>
+            <tr>
+              <th scope="col">ชื่องาน</th>
+              <th scope="col">ผู้รับผิดชอบ</th>
+              <th scope="col">สถานะ</th>
+              <th scope="col">กำหนดส่ง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-status="done">
+              <th scope="row" class="task-name">สรุปแผนงานประจำเดือน</th>
+              <td class="owner">กานต์</td>
+              <td><span class="status done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-02">2 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="done">
+              <th scope="row" class="task-name">จัดทำคู่มือเริ่มต้นใช้งาน</th>
+              <td class="owner">พิมพ์</td>
+              <td><span class="status done">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-04">4 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="active">
+              <th scope="row" class="task-name">ออกแบบหน้าภาพรวมโครงการ</th>
+              <td class="owner">มินตรา</td>
+              <td><span class="status active">กำลังดำเนินการ</span></td>
+              <td><time datetime="2026-10-07">7 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="pending">
+              <th scope="row" class="task-name">ตรวจสอบข้อความในหน้าเว็บ</th>
+              <td class="owner">ธันวา</td>
+              <td><span class="status pending">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-09">9 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="pending">
+              <th scope="row" class="task-name">เตรียมวาระประชุมทีม</th>
+              <td class="owner">นลิน</td>
+              <td><span class="status pending">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-12">12 ต.ค. 2026</time></td>
+            </tr>
+            <tr id="empty-state" class="empty" hidden>
+              <td colspan="4">ไม่พบงานที่ตรงกับการค้นหา ลองเปลี่ยนคำค้นหรือเลือกทุกสถานะ</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>Lantern · ข้อมูลและชื่อทั้งหมดเป็นตัวอย่างสมมติ</footer>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const searchInput = document.getElementById("task-search");
+      const statusFilter = document.getElementById("status-filter");
+      const resultsCount = document.getElementById("results-count");
+      const emptyState = document.getElementById("empty-state");
+
+      const normalize = (text) => text.normalize("NFC").toLocaleLowerCase("th").trim();
+
+      const tasks = Array.from(
+        document.querySelectorAll("#task-table tbody tr[data-status]")
+      ).map((row) => ({
+        row,
+        status: row.dataset.status,
+        searchText: normalize(
+          row.querySelector(".task-name").textContent + " " +
+          row.querySelector(".owner").textContent
+        )
+      }));
+
+      function filterTasks() {
+        const query = normalize(searchInput.value);
+        const selectedStatus = statusFilter.value;
+        let visibleCount = 0;
+
+        for (const task of tasks) {
+          const matchesSearch = task.searchText.includes(query);
+          const matchesStatus = selectedStatus === "all" || task.status === selectedStatus;
+          const visible = matchesSearch && matchesStatus;
+
+          task.row.hidden = !visible;
+          if (visible) visibleCount++;
+        }
+
+        emptyState.hidden = visibleCount !== 0;
+        resultsCount.textContent = `แสดง ${visibleCount} จาก ${tasks.length} งานตัวอย่าง`;
+      }
+
+      searchInput.addEventListener("input", filterTasks);
+      statusFilter.addEventListener("change", filterTasks);
+      filterTasks();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+[mcp_servers.goblin]
+command = "/absolute/path/to/node"
+args = ["/absolute/path/to/goblin/dist/cli.js","mcp"]

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Lantern — Dashboard งานทีม</title>
+  <style>
+    :root {
+      --background: #f5f6fa;
+      --surface: #ffffff;
+      --text: #202b3c;
+      --muted: #59677b;
+      --border: #dce2eb;
+      --primary: #4338ca;
+      --completed: #166534;
+      --pending: #854d0e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    main {
+      width: min(1080px, calc(100% - 40px));
+      margin: 48px auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--primary);
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 2.75rem); }
+    h2 { margin: 0; font-size: 1.25rem; }
+    p { margin: 0; }
+    .subtitle, .date, .note { color: var(--muted); }
+    .date { white-space: nowrap; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .card dt { color: var(--muted); }
+    .card dd {
+      margin: 8px 0 0;
+      font-size: 2.5rem;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .card.completed dd { color: var(--completed); }
+    .card.pending dd { color: var(--pending); }
+
+    .tasks {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .tasks-heading { padding: 24px 24px 0; }
+    .note { margin-top: 4px; font-size: .9rem; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .9rem;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #a7b2c2;
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+    }
+
+    input::placeholder { color: #64748b; }
+
+    :focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    .result-count {
+      padding: 0 24px 16px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .table-container { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      min-width: 660px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    caption {
+      padding: 12px 24px;
+      background: #f8fafc;
+      color: var(--muted);
+      text-align: left;
+      font-size: .9rem;
+    }
+
+    thead { background: #f0f3f8; }
+
+    th, td {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    thead th {
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 650;
+    }
+
+    tbody th { font-weight: 600; }
+    tbody tr:hover { background: #fafbfe; }
+    td:last-child { white-space: nowrap; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.completed { background: #e5f4e9; color: var(--completed); }
+    .badge.pending { background: #fff2d4; color: var(--pending); }
+
+    .empty {
+      padding: 32px 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    [hidden] { display: none !important; }
+
+    footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: .85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      main { width: calc(100% - 28px); margin: 24px auto; }
+      header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .summary { gap: 8px; }
+      .card { padding: 16px 10px; border-radius: 12px; }
+      .card dt { font-size: .8rem; }
+      .card dd { font-size: 2rem; }
+      .tasks-heading { padding: 20px 16px 0; }
+      .filters { grid-template-columns: 1fr; padding: 16px; }
+      .result-count { padding: 0 16px 16px; }
+      th, td { padding: 14px 16px; }
+      caption { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">TEAM DASHBOARD</p>
+        <h1>Lantern</h1>
+        <p class="subtitle">ภาพรวมงานของทีม Lantern</p>
+      </div>
+      <p class="date">วันที่ <time datetime="2026-10-05">5 ตุลาคม 2026</time></p>
+    </header>
+
+    <dl class="summary" aria-label="สรุปงานทั้งหมดของทีม">
+      <div class="card">
+        <dt>งานทั้งหมด</dt>
+        <dd>24</dd>
+      </div>
+      <div class="card completed">
+        <dt>เสร็จแล้ว</dt>
+        <dd>16</dd>
+      </div>
+      <div class="card pending">
+        <dt>รอดำเนินการ</dt>
+        <dd>8</dd>
+      </div>
+    </dl>
+
+    <section class="tasks" aria-labelledby="tasks-title">
+      <div class="tasks-heading">
+        <h2 id="tasks-title">รายการงานตัวอย่าง</h2>
+        <p class="note">แสดงงานตัวอย่าง 5 จาก 24 งาน · ตัวเลขสรุปเป็นภาพรวมของทีม</p>
+      </div>
+
+      <div class="filters" role="search" aria-label="ค้นหาและกรองงานตัวอย่าง">
+        <div>
+          <label for="search">ค้นหาชื่องานหรือผู้รับผิดชอบ</label>
+          <input id="search" type="search" placeholder="เช่น ออกแบบ หรือ มิน" autocomplete="off" aria-controls="task-table">
+        </div>
+        <div>
+          <label for="status">สถานะงาน</label>
+          <select id="status" aria-controls="task-table">
+            <option value="all">ทุกสถานะ</option>
+            <option value="completed">เสร็จแล้ว</option>
+            <option value="pending">รอดำเนินการ</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="result-count" class="result-count" role="status" aria-live="polite" aria-atomic="true">แสดง 5 จาก 5 งานตัวอย่าง</p>
+
+      <div class="table-container" role="region" aria-label="ตารางงาน เลื่อนแนวนอนเพื่อดูทุกคอลัมน์บนมือถือ" tabindex="0">
+        <table id="task-table">
+          <caption>ชื่องาน ผู้รับผิดชอบ สถานะ และกำหนดส่ง</caption>
+          <thead>
+            <tr>
+              <th scope="col">ชื่องาน</th>
+              <th scope="col">ผู้รับผิดชอบ</th>
+              <th scope="col">สถานะ</th>
+              <th scope="col">กำหนดส่ง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-status="completed">
+              <th scope="row">ออกแบบหน้าแนะนำทีม</th>
+              <td>มิน</td>
+              <td><span class="badge completed">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-02">2 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="completed">
+              <th scope="row">จัดทำแผนงานเดือนตุลาคม</th>
+              <td>ต้น</td>
+              <td><span class="badge completed">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-03">3 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="completed">
+              <th scope="row">ตรวจสอบเอกสารโครงการ</th>
+              <td>พลอย</td>
+              <td><span class="badge completed">เสร็จแล้ว</span></td>
+              <td><time datetime="2026-10-05">5 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="pending">
+              <th scope="row">เตรียมสไลด์ประชุมทีม</th>
+              <td>นัท</td>
+              <td><span class="badge pending">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-07">7 ต.ค. 2026</time></td>
+            </tr>
+            <tr data-status="pending">
+              <th scope="row">ทดสอบหน้าเว็บบนมือถือ</th>
+              <td>ฟ้า</td>
+              <td><span class="badge pending">รอดำเนินการ</span></td>
+              <td><time datetime="2026-10-09">9 ต.ค. 2026</time></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p id="empty-state" class="empty" hidden>ไม่พบงานที่ตรงกับการค้นหา ลองเปลี่ยนคำค้นหรือสถานะ</p>
+      <noscript>
+        <p class="empty">เปิดใช้งาน JavaScript เพื่อค้นหาและกรองงาน รายการงานทั้งหมดแสดงอยู่ในตาราง</p>
+      </noscript>
+    </section>
+
+    <footer>Lantern · ทีม ชื่อผู้รับผิดชอบ และข้อมูลทั้งหมดเป็นข้อมูลสมมติ</footer>
+  </main>
+
+  <script>
+    (() => {
+      const search = document.getElementById("search");
+      const status = document.getElementById("status");
+      const rows = Array.from(document.querySelectorAll("#task-table tbody tr"));
+      const resultCount = document.getElementById("result-count");
+      const emptyState = document.getElementById("empty-state");
+
+      const normalize = (value) => value.normalize("NFC").toLocaleLowerCase("th").trim();
+
+      function filterTasks() {
+        const query = normalize(search.value);
+        const selectedStatus = status.value;
+        let visibleCount = 0;
+
+        rows.forEach((row) => {
+          const searchableText = normalize(
+            row.cells[0].textContent + " " + row.cells[1].textContent
+          );
+          const matchesSearch = searchableText.includes(query);
+          const matchesStatus = selectedStatus === "all" || row.dataset.status === selectedStatus;
+          const visible = matchesSearch && matchesStatus;
+
+          row.hidden = !visible;
+          if (visible) visibleCount += 1;
+        });
+
+        resultCount.textContent = `แสดง ${visibleCount} จาก ${rows.length} งานตัวอย่าง`;
+        emptyState.hidden = visibleCount !== 0;
+      }
+
+      search.addEventListener("input", filterTasks);
+      status.addEventListener("change", filterTasks);
+      filterTasks();
+    })();
+  </script>
+</body>
+</html>

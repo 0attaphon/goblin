@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tgz
+.goblin/
+
+# Machine-specific inventory and raw benchmark sessions
+docs/local-scan-*.json
+benchmarks/html-context/results.local.json
+benchmarks/html-context/runs/**/events.jsonl
+benchmarks/html-context/runs/**/stderr.log
