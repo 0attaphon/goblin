@@ -34,10 +34,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ple41080/goblin.git"
+    "url": "git+https://github.com/0attaphon/goblin.git"
   },
-  "homepage": "https://github.com/ple41080/goblin#readme",
+  "homepage": "https://github.com/0attaphon/goblin#readme",
   "bugs": {
-    "url": "https://github.com/ple41080/goblin/issues"
+    "url": "https://github.com/0attaphon/goblin/issues"
   }
 }

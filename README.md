@@ -11,7 +11,7 @@
 Requires Node.js 22 or newer and Git. Install with one command:
 
 ```sh
-npm install --global github:ple41080/goblin
+npm install --global github:0attaphon/goblin
 ```
 
 Then scan your installed skills:
